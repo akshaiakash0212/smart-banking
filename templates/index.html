@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Intelligent Financial Assistant</title>
+
+<style>
+body{
+    margin:0;
+    height:100vh;
+    background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    font-family:'Segoe UI';
+}
+
+.chat-card{
+    width:420px;
+    backdrop-filter:blur(15px);
+    background:rgba(255,255,255,0.12);
+    border-radius:25px;
+    box-shadow:0 0 40px rgba(0,255,255,0.25);
+    overflow:hidden;
+}
+
+.header{
+    padding:18px;
+    background:rgba(0,0,0,0.4);
+    text-align:center;
+    color:#00f2ff;
+    font-size:20px;
+    font-weight:bold;
+}
+
+.chat-box{
+    height:350px;
+    padding:15px;
+    overflow-y:auto;
+}
+
+.bot{
+    background:rgba(0,255,255,0.15);
+    color:#eaffff;
+    padding:10px;
+    margin:10px 0;
+    border-radius:12px;
+    width:80%;
+}
+
+.user{
+    background:#00f2ff;
+    color:#002b36;
+    padding:10px;
+    margin:10px 0;
+    border-radius:12px;
+    width:80%;
+    margin-left:auto;
+    text-align:right;
+}
+
+.quick-btns{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    padding:10px;
+}
+
+.quick-btns button{
+    flex:1;
+    background:transparent;
+    border:1px solid #00f2ff;
+    color:#00f2ff;
+    padding:8px;
+    border-radius:20px;
+    cursor:pointer;
+}
+
+.footer{
+    display:flex;
+    border-top:1px solid rgba(255,255,255,0.2);
+}
+
+input{
+    flex:1;
+    padding:15px;
+    background:transparent;
+    border:none;
+    outline:none;
+    color:white;
+}
+
+.send{
+    background:#00f2ff;
+    border:none;
+    padding:15px;
+    cursor:pointer;
+}
+</style>
+</head>
+
+<body>
+
+<div class="chat-card">
+    <div class="header">
+        💳 Intelligent Financial Assistant<br>
+        <a href="/logout" style="color:white;font-size:12px;">Logout</a>
+    </div>
+
+    <div class="chat-box" id="chatBox">
+        <div class="bot">👋 Welcome! How can I help you today?</div>
+    </div>
+
+    <div class="quick-btns">
+        <button onclick="quick('balance')">Balance</button>
+        <button onclick="quick('loan')">Loan</button>
+        <button onclick="quick('interest')">Interest</button>
+        <button onclick="quick('account')">Account</button>
+    </div>
+
+    <div class="footer">
+        <input id="msg" placeholder="Ask something...">
+        <button class="send" onclick="send()">➤</button>
+    </div>
+</div>
+
+<script>
+function send(){
+    let msg=document.getElementById("msg").value;
+    if(msg==="") return;
+
+    let box=document.getElementById("chatBox");
+    box.innerHTML+=`<div class="user">${msg}</div>`;
+    document.getElementById("msg").value="";
+
+    fetch("/chatbot",{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({message:msg})
+    })
+    .then(res=>res.json())
+    .then(data=>{
+        box.innerHTML+=`<div class="bot">${data.reply}</div>`;
+        box.scrollTop=box.scrollHeight;
+    });
+}
+
+function quick(text){
+    document.getElementById("msg").value=text;
+    send();
+}
+</script>
+
+</body>
+</html>

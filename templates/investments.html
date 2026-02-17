@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Smart Trading Platform</title>
+
+    <script src="https://s3.tradingview.com/tv.js"></script>
+
+    <style>
+        body{
+            margin:0;
+            font-family:'Segoe UI',sans-serif;
+            background:#0f172a;
+            color:white;
+        }
+
+        .header{
+            background:#111827;
+            padding:15px 25px;
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            border-bottom:1px solid #1f2937;
+        }
+
+        .header h2{
+            margin:0;
+            color:#00f5ff;
+        }
+
+        .container{
+            display:flex;
+            height:calc(100vh - 70px);
+        }
+
+        .chart-section{
+            flex:3;
+            padding:15px;
+        }
+
+        #chart{
+            height:100%;
+            border-radius:10px;
+            overflow:hidden;
+        }
+
+        .trade-panel{
+            flex:1;
+            background:#111827;
+            padding:20px;
+            border-left:1px solid #1f2937;
+            position:relative;
+        }
+
+        .trade-panel h3{
+            margin-top:0;
+            color:#00f5ff;
+        }
+
+        .wallet-box{
+            background:#1f2937;
+            padding:15px;
+            border-radius:10px;
+            margin-bottom:20px;
+        }
+
+        input{
+            width:100%;
+            padding:10px;
+            margin:10px 0;
+            border-radius:8px;
+            border:none;
+            background:#1f2937;
+            color:white;
+        }
+
+        /* ============================= */
+        /* 🔥 CREATIVE TRADE BUTTONS */
+        /* ============================= */
+
+        .trade-btn{
+            width:100%;
+            padding:14px;
+            margin-top:15px;
+            border:none;
+            border-radius:10px;
+            font-weight:bold;
+            font-size:16px;
+            cursor:pointer;
+            position:relative;
+            overflow:hidden;
+            transition:all 0.25s ease;
+            letter-spacing:1px;
+        }
+
+        .buy{
+            background:linear-gradient(135deg,#00ff88,#00cc66);
+            color:black;
+            box-shadow:0 0 15px #00ff88;
+        }
+
+        .sell{
+            background:linear-gradient(135deg,#ff4d4d,#cc0000);
+            color:white;
+            box-shadow:0 0 15px #ff4d4d;
+        }
+
+        .buy:hover{
+            box-shadow:0 0 25px #00ff88, 0 0 40px #00ff88;
+            transform:translateY(-2px);
+        }
+
+        .sell:hover{
+            box-shadow:0 0 25px #ff4d4d, 0 0 40px #ff4d4d;
+            transform:translateY(-2px);
+        }
+
+        .trade-btn:active{
+            transform:scale(0.97);
+        }
+
+        /* ============================= */
+        /* ⚡ ORDER EXECUTION ANIMATION */
+        /* ============================= */
+
+        .execution-bar{
+            position:absolute;
+            top:0;
+            left:0;
+            height:4px;
+            width:0%;
+            background:linear-gradient(90deg,#00f5ff,#00ff88);
+            animation:execute 1s linear forwards;
+        }
+
+        @keyframes execute{
+            from{ width:0%; }
+            to{ width:100%; }
+        }
+
+        /* ============================= */
+        /* 🎉 SUCCESS MODAL */
+        /* ============================= */
+
+        .modal{
+            position:fixed;
+            top:0;
+            left:0;
+            width:100%;
+            height:100%;
+            background:rgba(0,0,0,0.6);
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            visibility:hidden;
+            opacity:0;
+            transition:0.3s;
+        }
+
+        .modal-content{
+            background:#111827;
+            padding:30px;
+            border-radius:15px;
+            text-align:center;
+            width:300px;
+            box-shadow:0 0 25px #00f5ff;
+            animation:pop 0.3s ease;
+        }
+
+        @keyframes pop{
+            from{ transform:scale(0.7); }
+            to{ transform:scale(1); }
+        }
+
+        .modal.show{
+            visibility:visible;
+            opacity:1;
+        }
+
+        .modal button{
+            margin-top:15px;
+            padding:8px 15px;
+            border:none;
+            border-radius:8px;
+            background:#00f5ff;
+            cursor:pointer;
+        }
+
+        .timeframes{
+            display:flex;
+            gap:10px;
+            margin-bottom:10px;
+        }
+
+        .timeframes button{
+            flex:1;
+            padding:8px;
+            background:#1f2937;
+            color:white;
+            border:1px solid #00f5ff;
+        }
+
+        .timeframes button:hover{
+            background:#00f5ff;
+            color:black;
+        }
+
+    </style>
+</head>
+
+<body>
+
+<div class="header">
+    <h2>📈 Smart Trading Terminal</h2>
+    <div>Logged In User</div>
+</div>
+
+<div class="container">
+
+    <div class="chart-section">
+
+        <div class="timeframes">
+            <button onclick="changeInterval('1')">1M</button>
+            <button onclick="changeInterval('5')">5M</button>
+            <button onclick="changeInterval('60')">1H</button>
+            <button onclick="changeInterval('D')">1D</button>
+        </div>
+
+        <div id="chart"></div>
+    </div>
+
+    <div class="trade-panel" id="tradePanel">
+
+        <h3>Trade Panel</h3>
+
+        <div class="wallet-box">
+            <p><strong>Wallet:</strong> ₹<span id="wallet">100000</span></p>
+            <p><strong>Stocks Owned:</strong> <span id="portfolio">0</span></p>
+        </div>
+
+        <label>Quantity</label>
+        <input type="number" id="quantity" placeholder="Enter quantity">
+
+        <label>Market Price</label>
+        <input type="number" id="price" value="100">
+
+        <button class="trade-btn buy" onclick="tradeStock('buy')">
+            🚀 BUY STOCK
+        </button>
+
+        <button class="trade-btn sell" onclick="tradeStock('sell')">
+            🔻 SELL STOCK
+        </button>
+
+    </div>
+
+</div>
+
+<!-- 🎉 SUCCESS MODAL -->
+<div class="modal" id="successModal">
+    <div class="modal-content">
+        <h3 id="modalMessage">Trade Successful</h3>
+        <button onclick="closeModal()">OK</button>
+    </div>
+</div>
+
+<script>
+
+let widget;
+
+function loadChart(interval){
+    if(widget){
+        document.getElementById("chart").innerHTML="";
+    }
+
+    widget = new TradingView.widget({
+        "width": "100%",
+        "height": "100%",
+        "symbol": "NASDAQ:AAPL",
+        "interval": interval,
+        "timezone": "Asia/Kolkata",
+        "theme": "dark",
+        "style": "1",
+        "locale": "en",
+        "container_id": "chart"
+    });
+}
+
+function changeInterval(interval){
+    loadChart(interval);
+}
+
+loadChart("60");
+
+/* ⚡ Trade Function Updated with Animation + Modal */
+
+function tradeStock(action){
+
+    let panel = document.getElementById("tradePanel");
+
+    // Add execution bar
+    let bar = document.createElement("div");
+    bar.classList.add("execution-bar");
+    panel.appendChild(bar);
+
+    setTimeout(()=>{
+        bar.remove();
+    },1000);
+
+    let quantity = document.getElementById("quantity").value;
+    let price = document.getElementById("price").value;
+
+    fetch("/trade",{
+        method:"POST",
+        headers:{
+            "Content-Type":"application/json"
+        },
+        body:JSON.stringify({
+            action:action,
+            quantity:quantity,
+            price:price
+        })
+    })
+    .then(res=>res.json())
+    .then(data=>{
+
+        document.getElementById("wallet").innerText = data.wallet;
+        document.getElementById("portfolio").innerText = data.portfolio;
+
+        document.getElementById("modalMessage").innerText = data.message;
+        document.getElementById("successModal").classList.add("show");
+
+    });
+}
+
+function closeModal(){
+    document.getElementById("successModal").classList.remove("show");
+}
+
+</script>
+
+</body>
+</html>

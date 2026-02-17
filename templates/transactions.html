@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Transactions</title>
+
+<style>
+body{
+    margin:0;
+    font-family:'Segoe UI', sans-serif;
+    background:linear-gradient(135deg,#0b132b,#1c2541,#3a506b);
+    min-height:100vh;
+    color:white;
+}
+
+/* HEADER */
+.header{
+    background:linear-gradient(135deg,#1c2541,#3a506b);
+    padding:18px 30px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.header h2{
+    margin:0;
+    font-size:20px;
+}
+
+.header a{
+    color:#5bc0be;
+    text-decoration:none;
+    font-size:14px;
+}
+
+/* TABLE CARD */
+.container{
+    padding:30px;
+}
+
+.table-card{
+    background:rgba(255,255,255,0.08);
+    backdrop-filter:blur(10px);
+    border-radius:18px;
+    padding:20px;
+    box-shadow:0 15px 40px rgba(0,0,0,0.5);
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+th, td{
+    padding:14px;
+    text-align:left;
+    font-size:14px;
+}
+
+th{
+    color:#5bc0be;
+    border-bottom:1px solid rgba(255,255,255,0.2);
+}
+
+tr:not(:last-child){
+    border-bottom:1px solid rgba(255,255,255,0.08);
+}
+
+.credit{
+    color:#00ff9d;
+    font-weight:600;
+}
+
+.debit{
+    color:#ff6b6b;
+    font-weight:600;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+    <h2>Transaction History</h2>
+    <a href="/dashboard">⬅ Back to Dashboard</a>
+</div>
+
+<div class="container">
+    <div class="table-card">
+        <table>
+            <tr>
+                <th>Date</th>
+                <th>Description</th>
+                <th>Type</th>
+                <th>Amount</th>
+                <th>Balance</th>
+            </tr>
+
+            <tr>
+                <td>10 Jan 2026</td>
+                <td>Salary Credit</td>
+                <td class="credit">Credit</td>
+                <td class="credit">+ ₹35,000</td>
+                <td>₹45,250</td>
+            </tr>
+
+            <tr>
+                <td>08 Jan 2026</td>
+                <td>Amazon Purchase</td>
+                <td class="debit">Debit</td>
+                <td class="debit">- ₹2,300</td>
+                <td>₹10,250</td>
+            </tr>
+
+            <tr>
+                <td>06 Jan 2026</td>
+                <td>EMI - Home Loan</td>
+                <td class="debit">Debit</td>
+                <td class="debit">- ₹8,500</td>
+                <td>₹12,550</td>
+            </tr>
+
+            <tr>
+                <td>04 Jan 2026</td>
+                <td>UPI - Grocery</td>
+                <td class="debit">Debit</td>
+                <td class="debit">- ₹950</td>
+                <td>₹21,050</td>
+            </tr>
+
+        </table>
+    </div>
+</div>
+
+</body>
+</html>

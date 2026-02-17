@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Credit Score</title>
+
+<style>
+
+body{
+    margin:0;
+    font-family:'Segoe UI',sans-serif;
+    background: linear-gradient(135deg,#0b132b,#1c2541,#3a506b);
+    color:white;
+}
+
+/* HEADER */
+.header{
+    background:linear-gradient(135deg,#1c2541,#3a506b);
+    padding:20px;
+    font-size:22px;
+    font-weight:bold;
+    text-align:center;
+}
+
+/* MAIN */
+.container{
+    padding:30px;
+    max-width:1000px;
+    margin:auto;
+}
+
+/* CREDIT GAUGE */
+.gauge-container{
+    display:flex;
+    justify-content:center;
+    margin-bottom:40px;
+}
+
+.gauge{
+    width:220px;
+    height:220px;
+    border-radius:50%;
+    background:
+    conic-gradient(
+        #00ffa6 0deg,
+        #00eaff 120deg,
+        #7f00ff 220deg,
+        #ff00cc 300deg,
+        #ff0055 360deg
+    );
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    box-shadow:0 0 40px rgba(0,255,200,0.4);
+}
+
+.gauge-inner{
+    width:170px;
+    height:170px;
+    border-radius:50%;
+    background:#0b132b;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-direction:column;
+}
+
+.score{
+    font-size:42px;
+    font-weight:bold;
+    color:#00ffa6;
+}
+
+.score-label{
+    font-size:14px;
+    color:#aaa;
+}
+
+/* TIPS */
+.tips{
+    margin-top:30px;
+}
+
+.tip-card{
+    background:rgba(255,255,255,0.05);
+    padding:15px;
+    margin-bottom:10px;
+    border-radius:10px;
+}
+
+/* LOAN TABLE */
+.loan-table{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:20px;
+}
+
+.loan-table th,
+.loan-table td{
+    padding:12px;
+    text-align:center;
+}
+
+.loan-table th{
+    background:#00eaff;
+    color:black;
+}
+
+.loan-table tr{
+    background:rgba(255,255,255,0.05);
+}
+
+/* PREMIUM HISTOGRAM CONTAINER */
+.loan-chart-container{
+    width:100%;
+    max-width:700px;
+    margin:40px auto;
+    padding:25px;
+    border-radius:20px;
+    background: linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02));
+    backdrop-filter: blur(12px);
+    box-shadow: 0 10px 40px rgba(0,0,0,0.35);
+}
+
+</style>
+
+</head>
+<body>
+
+<div class="header">
+Credit Score Dashboard
+</div>
+
+<div class="container">
+
+<!-- CREDIT GAUGE -->
+<div class="gauge-container">
+    <div class="gauge">
+        <div class="gauge-inner">
+            <div class="score" id="score">0</div>
+            <div class="score-label">CIBIL Score</div>
+        </div>
+    </div>
+</div>
+
+<!-- IMPROVE TIPS -->
+<div class="tips">
+
+<h2>Improve Tips</h2>
+
+<div class="tip-card">✔ Pay EMI on time</div>
+<div class="tip-card">✔ Maintain low credit usage</div>
+<div class="tip-card">✔ Avoid multiple loan requests</div>
+
+</div>
+
+<!-- LOAN ELIGIBILITY TABLE -->
+
+<h2>Loan Eligibility</h2>
+
+<table class="loan-table">
+<tr>
+<th>Loan Type</th>
+<th>Status</th>
+<th>Amount</th>
+</tr>
+
+<tr>
+<td>Personal Loan</td>
+<td>Eligible</td>
+<td>₹5,00,000</td>
+</tr>
+
+<tr>
+<td>Home Loan</td>
+<td>Eligible</td>
+<td>₹25,00,000</td>
+</tr>
+
+<tr>
+<td>Car Loan</td>
+<td>Eligible</td>
+<td>₹8,00,000</td>
+</tr>
+
+<tr>
+<td>Education Loan</td>
+<td>Eligible</td>
+<td>₹10,00,000</td>
+</tr>
+
+</table>
+
+<!-- PREMIUM HISTOGRAM -->
+<div class="loan-chart-container">
+<canvas id="loanEligibilityChart"></canvas>
+</div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+
+// animated score counter
+let scoreElement=document.getElementById("score");
+let score=0;
+let target=782;
+
+let interval=setInterval(()=>{
+    score++;
+    scoreElement.innerText=score;
+    if(score>=target) clearInterval(interval);
+},10);
+
+
+// PREMIUM HISTOGRAM
+const ctx=document.getElementById('loanEligibilityChart').getContext('2d');
+
+const gradient1=ctx.createLinearGradient(0,0,0,400);
+gradient1.addColorStop(0,"#00F5A0");
+gradient1.addColorStop(1,"#00D9F5");
+
+const gradient2=ctx.createLinearGradient(0,0,0,400);
+gradient2.addColorStop(0,"#7F00FF");
+gradient2.addColorStop(1,"#E100FF");
+
+const gradient3=ctx.createLinearGradient(0,0,0,400);
+gradient3.addColorStop(0,"#FF512F");
+gradient3.addColorStop(1,"#F09819");
+
+const gradient4=ctx.createLinearGradient(0,0,0,400);
+gradient4.addColorStop(0,"#00C6FF");
+gradient4.addColorStop(1,"#0072FF");
+
+
+new Chart(ctx,{
+type:'bar',
+
+data:{
+labels:[
+"Personal Loan",
+"Home Loan",
+"Car Loan",
+"Education Loan"
+],
+
+datasets:[{
+label:"Eligibility %",
+data:[75,85,65,80],
+
+backgroundColor:[
+gradient1,
+gradient2,
+gradient3,
+gradient4
+],
+
+borderRadius:12,
+borderSkipped:false,
+
+hoverBackgroundColor:[
+"#00FFC6",
+"#C44DFF",
+"#FF7A45",
+"#3399FF"
+]
+
+}]
+},
+
+options:{
+responsive:true,
+
+plugins:{
+legend:{
+labels:{
+color:"white",
+font:{
+size:14,
+weight:"bold"
+}
+}
+}
+},
+
+scales:{
+x:{
+ticks:{
+color:"white"
+},
+grid:{
+display:false
+}
+},
+
+y:{
+beginAtZero:true,
+max:100,
+
+ticks:{
+color:"white"
+},
+
+grid:{
+color:"rgba(255,255,255,0.08)"
+}
+
+}
+},
+
+animation:{
+duration:2000,
+easing:'easeOutQuart'
+}
+
+}
+
+});
+
+</script>
+
+</body>
+</html>
